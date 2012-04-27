@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source ~/util.sh
+source ~/scripts/util.sh
 
 printtag=' ::=> '
 
@@ -21,15 +21,17 @@ fi
 
 bold_print "Detected ${whosephone}'s phone..."
 
+mkdir -p ~/Phones
+
 # Grab the stuff from the phone
 bold_print $printtag "Syncing phone to local Phones folder"
 rsync -avuz --exclude '.thumbnails' /media/${phoneids[$whosephone]}/DCIM /home/mgalgs/Phones/$whosephone
 
 # sync to sonch if it's up:
-if [[ $(hostisup sonch) = yes ]]; then
-	bold_print $printtag "Syncing local Phones folder to to sonch"
-	rsync -avuz -e ssh /home/mgalgs/Phones sonchl:/home/mgalgs/
-	rsync -avuz -e ssh sonchl:/home/mgalgs/Phones /home/mgalgs/
+if grep -qs /media/space /proc/mounts; then
+	bold_print $printtag "Syncing local Phones folder to "
+	rsync -avuz --no-g /home/mgalgs/Phones /media/space/
+	rsync -avuz --no-g /media/space/Phones /home/mgalgs/
 else
-	bold_print $printtag "Couldn't sync to sonch \(is sonch on?\)"
+	bold_print $printtag "Couldn't sync to space (is the freenas server accessible?)"
 fi

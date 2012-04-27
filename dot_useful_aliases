@@ -1,3 +1,4 @@
+# -*- mode: sh -*-
 alias mktags='etags `find $CODEDIR -name "*.[h|c]"`'
 alias sstatus='pushd ~/school && svn st && popd'
 alias saddnew='pushd ~/school && addnew && popd'
@@ -11,3 +12,4 @@ alias gistatus='git status'
 alias giull='git pull'
 alias gco='git checkout'
 alias pptview='wine "C:\\program files\microsoft office\office12\pptview.exe"'
+alias sprunge="curl -F 'sprunge=<-' http://sprunge.us"
