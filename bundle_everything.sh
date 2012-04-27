@@ -11,7 +11,7 @@ mdie()
 bundle_current_repo()
 {
     bndlname=$(basename $PWD).bundle
-    git bundle create $bndlname -10 master 2>/dev/null || mdie "couldn't create bundle $bndlname"
+    git bundle create $bndlname -10 --all 2>/dev/null || mdie "couldn't create bundle $bndlname"
     echo "$PWD/$bndlname"
 }
 
