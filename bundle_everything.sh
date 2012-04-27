@@ -34,7 +34,7 @@ done
 echo
 
 echo "tar'ing up bundles"
-dest_tar=my_emacs_bundle-$(date +%F).tar.xz
+dest_tar=my_$(basename $PWD)_bundle-$(date +%F).tar.xz
 rm -f $dest_tar
 tar cJf $dest_tar *.bundle || mdie "Couldn't tar up the bundles'"
 echo "created $dest_tar"
