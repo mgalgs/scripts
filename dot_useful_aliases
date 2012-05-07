@@ -13,3 +13,5 @@ alias giull='git pull'
 alias gco='git checkout'
 alias pptview='wine "C:\\program files\microsoft office\office12\pptview.exe"'
 alias sprunge="curl -F 'sprunge=<-' http://sprunge.us"
+alias ls='ls --color=auto -B'
+alias grep='grep --color=auto'
