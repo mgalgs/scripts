@@ -111,14 +111,19 @@ appendMessage()
 # set these to yes to activate svn or git status in PS1
 USE_SVN_IN_PS1=no
 USE_GIT_IN_PS1=yes
+USE_RUBY_IN_PS1=yes
+USE_COMMAND_HISTORY_IN_PS1=no
+USE_UPTIME_IN_PS1=yes
 
 myps1messages()
 {
     MESS=""
     # append the command history
-    appendMessage "!\!"
+    [[ $(isYes $USE_COMMAND_HISTORY_IN_PS1) == "1" ]] && appendMessage "!\!"
     # append the load average over the past 1 minute
-    appendMessage `uptime | sed 's/\(.*load\ average:\ \)//g' | sed 's/,.*$//g'`
+    [[ $(isYes $USE_UPTIME_IN_PS1) == "1" ]] && appendMessage `uptime | sed 's/\(.*load\ average:\ \)//g' | sed 's/,.*$//g'`
+    # append ruby stuff from rvm
+    [[ $(isYes $USE_RUBY_IN_PS1) == "1" ]] && appendMessage "$(rvm-prompt)"
 
     # svn status
     [[ $(isYes $USE_SVN_IN_PS1) == "1" ]] && { [ `svn status -N 2>/dev/null | awk 'BEGIN {i=0} {i++} END {print i}'` -gt 0 ] && appendMessage "svn changes"; }
