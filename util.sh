@@ -111,7 +111,7 @@ appendMessage()
 # set these to yes to activate svn or git status in PS1
 USE_SVN_IN_PS1=no
 USE_GIT_IN_PS1=yes
-USE_RUBY_IN_PS1=yes
+USE_RUBY_IN_PS1=no
 USE_COMMAND_HISTORY_IN_PS1=no
 USE_UPTIME_IN_PS1=yes
 
