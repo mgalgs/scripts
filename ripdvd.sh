@@ -2,7 +2,7 @@
 
 # usage
 if [[ $1 == "-h" || $1 == "--help" || $# -gt 2 ]]; then
-    echo "Usage: ripdvd.sh [dvd-device]"
+    echo "Usage: ripdvd.sh [dvd-device or iso]"
     echo
     echo "There are a few other parameters that can be overridden."
     echo "See the source."
