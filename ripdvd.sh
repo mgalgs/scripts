@@ -66,10 +66,10 @@ while : ; do
     done
     echo
     echo "Menu:"
-    echo "xN      : Toggle rip selection for title with id N"
+    echo "xN      : Toggle rip selection for title N"
     echo "            (omit N to select/deselect all)"
-    echo "pN      : Preview title with id N"
-    echo "eN      : Toggle marking title with id N as an extra"
+    echo "pN      : Preview title N"
+    echo "eN      : Toggle title N as a main feature"
     echo "q       : Quit"
     echo '<enter> : Go!'
     echo
