@@ -5,3 +5,6 @@
 
 rsync -rtlvuz /media/space/Pictures /home/mgalgs/
 rsync -rtlvuz /home/mgalgs/Pictures /media/space/
+
+rsync -rtlvuz /home/mgalgs/Music /media/space/
+rsync -rtlvuz /media/space/Music /home/mgalgs/
