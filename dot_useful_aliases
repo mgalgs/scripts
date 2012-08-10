@@ -5,7 +5,6 @@ alias saddnew='pushd ~/school && addnew && popd'
 alias em='emacs -Q -nw'
 alias emc='emacsclient -n -a emacs'
 alias tmail='tail /var/mail/`whoami`'
-alias dwatch="watch -n 1 'dmesg | tail -35'"
 alias emacs-clean='find . -name *~ -exec rm {} \; -or -name .*~ -exec rm {} \;'
 alias giporc='git status --porcelain'
 alias gistatus='git status'

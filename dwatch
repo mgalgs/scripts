@@ -1,0 +1,6 @@
+#!/bin/bash
+
+term_height=$(tput lines)
+[[ $term_height -gt 4 ]] || { echo "terminal not tall enough"; exit 1; }
+lines_to_watch=$(bc <<<"$term_height - 4")
+watch -n 1 "dmesg | tail -${lines_to_watch} | cut -c 1-$(tput cols)"

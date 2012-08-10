@@ -29,7 +29,7 @@ minfo_zen()
 toupper()
 {
     local char="$*"
-    out=$(echo $char | tr [:lower:] [:upper:])
+    out=$(echo $char | tr '[:lower:]' '[:upper:]')
     local retval=$?
     echo "$out"
     unset out char
@@ -40,7 +40,7 @@ toupper()
 tolower()
 {
     local char="$*"
-    out=$(echo $char | tr [:upper:] [:lower:])
+    out=$(echo $char | tr '[:upper:]' '[:lower:]')
     local retval=$?
     echo "$out"
     unset out
@@ -114,6 +114,7 @@ USE_GIT_IN_PS1=yes
 USE_RUBY_IN_PS1=no
 USE_COMMAND_HISTORY_IN_PS1=no
 USE_UPTIME_IN_PS1=yes
+USE_CHOOSECOMBO_IN_PS1=yes
 
 myps1messages()
 {
@@ -130,6 +131,8 @@ myps1messages()
 
     # git status
     [[ $(isYes $USE_GIT_IN_PS1) == "1" ]] && { git_stuff=$(__git_ps1 "(%s)"); [ `echo $git_stuff | wc -c` -gt 2 ] && appendMessage $git_stuff; }
+
+    [[ $(isYes $USE_CHOOSECOMBO_IN_PS1) == "1" ]] && { [[ -n "$TARGET_PRODUCT" ]] && appendMessage "target:$TARGET_PRODUCT"; }
 
     PS1="${MYPS1FRONT}${MESS}${MYPS1BACK}"
 }
