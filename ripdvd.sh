@@ -9,12 +9,39 @@ if [[ $1 == "-h" || $1 == "--help" || $# -gt 2 ]]; then
     exit 1
 fi
 
+print_help_menu()
+{
+    cat <<"EOF"
+Toggle rip selection:
+   Controls whether or not the title will be ripped
+
+Preview
+   Launches a preview of the title in a separate video player
+
+Toggle main feature
+   Controls whether or not the title is considered a "main feature"
+   (This only affects the resulting filename, nothing more).
+
+EOF
+}
+
 # some params that can be overridden:
 DVDDEVICE=${1:-/dev/sr0}
 OUTPUTDIR=${OUTPUTDIR:-~/Videos}
 DORIP=${DORIP:-yes}
 HANDBRAKE_PROFILE=${HANDBRAKE_PROFILE:-"High Profile"}
 HANDBRAKE_OUTPUT_FORMAT=${HANDBRAKE_OUTPUT_FORMAT:-mp4}
+
+# check for some necessary programs
+found_everything=yes
+for required_prog in lsdvd HandBrakeCLI; do
+    which $required_prog >/dev/null 2>&1
+    [[ $? -eq 0 ]] || {
+	echo "Couldn't find the \`$required_prog' utility. Please install it and try again."
+	found_everything=no
+    }
+done
+[[ $found_everything = yes ]] || exit 1
 
 
 if ! lsdvd $DVDDEVICE > /dev/null 2>&1; then
@@ -70,12 +97,14 @@ while : ; do
     echo "            (omit N to select/deselect all)"
     echo "pN      : Preview title N"
     echo "eN      : Toggle title N as a main feature"
+    echo "            (omit N to select/deselect all)"
     echo "q       : Quit"
+    echo "h       : Help"
     echo '<enter> : Go!'
     echo
     read -p " >>> " selection
     [[ -z "$selection" ]] && break
-    if [[ ( ! $selection =~ ^[xpeq] ) || ${selection:1} > ${#thetitles[@]} ]]; then
+    if [[ ( ! $selection =~ ^[xpeqh] ) || ${selection:1} > ${#thetitles[@]} ]]; then
         echo "Invalid selection"
         continue
     fi
@@ -104,11 +133,26 @@ while : ; do
             fi
             ;;
         e*)
-            if [[ "${ismainfeature[${selection:1}]}" == "x" ]]; then
-                ismainfeature[${selection:1}]=""
-            else
-                ismainfeature[${selection:1}]="x"
-            fi
+            if [[ -z "${selection:1}" ]]; then
+                # they omitted N, toggle all
+                if [[ ${ismainfeature[1]} == "x" ]]; then
+                    xval=""
+                else
+                    xval="x"
+                fi
+
+                myind=1
+                for bogus in "${willrip[@]}"; do
+                    ismainfeature[$myind]=$xval
+                    (( myind++ ))
+                done
+	    else
+		if [[ "${ismainfeature[${selection:1}]}" == "x" ]]; then
+                    ismainfeature[${selection:1}]=""
+		else
+                    ismainfeature[${selection:1}]="x"
+		fi
+	    fi
             ;;
         p*)
             mplayer dvd://${selection:1}/$DVDDEVICE
@@ -117,6 +161,11 @@ while : ; do
             echo "Bye"
             exit 1
             ;;
+	h)
+	    print_help_menu
+	    echo "Press enter to continue..."
+	    read bogus
+	    ;;
     esac
 done
 
@@ -134,6 +183,8 @@ fi
 HANDBRAKE_BASE_CMD="HandBrakeCLI --input $output_iso --preset $HANDBRAKE_PROFILE"
 
 echo "You can watch the output by tailing /tmp/ripdvd-output.txt"
+
+rm -f /tmp/ripdvd-output.txt
 
 titleid=1
 mainind=1
@@ -153,6 +204,15 @@ for thetitle in "${thetitles[@]}"; do
         echo "ripping title $titleid with the following command:"
         echo $handbrake_cmd
         $handbrake_cmd >> /tmp/ripdvd-output.txt 2>&1
+	grep -q "No title found" /tmp/ripdvd-output.txt
+	[[ $? -eq 0 ]] && {
+	    echo
+	    echo 'WOW!'
+	    echo "The rip doesn't seem to be working..."
+	    echo "Try running the following command manually to investigate:"
+	    echo $handbrake_cmd
+	    exit 1
+	}
     else
         echo "skipping ${titleid} (Due to user request. We fight for the Users...)"
     fi
