@@ -182,9 +182,9 @@ fi
 
 HANDBRAKE_BASE_CMD="HandBrakeCLI --input $output_iso --preset $HANDBRAKE_PROFILE"
 
-echo "You can watch the output by tailing /tmp/ripdvd-output.txt"
+logfile=$(mktemp)
 
-rm -f /tmp/ripdvd-output.txt
+echo "You can watch the output by tailing $logfile"
 
 titleid=1
 mainind=1
@@ -203,8 +203,8 @@ for thetitle in "${thetitles[@]}"; do
         handbrake_cmd="$HANDBRAKE_BASE_CMD --output $outfile --title $titleid"
         echo "ripping title $titleid with the following command:"
         echo $handbrake_cmd
-        $handbrake_cmd >> /tmp/ripdvd-output.txt 2>&1
-	grep -q "No title found" /tmp/ripdvd-output.txt
+        $handbrake_cmd >> $logfile 2>&1
+	grep -q "No title found" $logfile
 	[[ $? -eq 0 ]] && {
 	    echo
 	    echo 'WOW!'
