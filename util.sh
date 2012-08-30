@@ -115,6 +115,7 @@ USE_RUBY_IN_PS1=no
 USE_COMMAND_HISTORY_IN_PS1=no
 USE_UPTIME_IN_PS1=yes
 USE_CHOOSECOMBO_IN_PS1=yes
+USE_VIRTUALENV_IN_PS1=yes
 
 myps1messages()
 {
@@ -133,6 +134,8 @@ myps1messages()
     [[ $(isYes $USE_GIT_IN_PS1) == "1" ]] && { git_stuff=$(__git_ps1 "(%s)"); [ `echo $git_stuff | wc -c` -gt 2 ] && appendMessage $git_stuff; }
 
     [[ $(isYes $USE_CHOOSECOMBO_IN_PS1) == "1" ]] && { [[ -n "$TARGET_PRODUCT" ]] && appendMessage "target:$TARGET_PRODUCT"; }
+
+    [[ $(isYes $USE_VIRTUALENV_IN_PS1) == "1" ]] && { [[ -n "$VIRTUAL_ENV" ]] && appendMessage "venv:${VIRTUAL_ENV##*/}"; }
 
     PS1="${MYPS1FRONT}${MESS}${MYPS1BACK}"
 }
