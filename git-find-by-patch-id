@@ -1,0 +1,23 @@
+#!/bin/bash
+
+if [[ $1 == "-h" || $1 == "--help" || $# -ne 2 ]]; then
+    echo "Usage: $(basename $0) <patch-id> <starting-point>"
+    echo
+    echo 'Searches a tree from "starting-point" (using git-rev-list)'
+    echo 'for a commit whose patch-id matches "patch-id"'
+    exit 1
+fi
+
+patch_id=$1
+starting_point=$2
+ret=1
+
+for commit in $(git rev-list $starting_point); do
+    this_patch_id=$(git show $commit | git patch-id | cut -d' ' -f1)
+    if [[ $this_patch_id = $patch_id ]]; then
+	echo $commit
+	ret=0
+    fi
+done
+
+exit $ret
