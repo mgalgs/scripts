@@ -1,0 +1,3 @@
+#!/bin/bash
+
+bc <<<"obase=16;$1"
