@@ -1,3 +1,6 @@
 #!/bin/bash
 
-bc <<<"ibase=16;${1^^}"
+in1=${1^^}
+in1=${in1##0X}
+
+bc <<<"ibase=16;${in1}"

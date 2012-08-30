@@ -1,0 +1,8 @@
+#!/bin/bash
+
+in1=${1^^}
+in1=${in1##0X}
+in2=${2^^}
+in2=${in2##0X}
+
+bc <<<"obase=16;ibase=16;print \"0x\", ${in1}-${in2}, \"\n\""
