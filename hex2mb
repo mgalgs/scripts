@@ -1,3 +1,3 @@
 #!/bin/bash
 
-bc <<<"$(hex2dec $1) / 1024 / 1024"
+bc -l <<<"scale=6;$(hex2dec $1) / 1024 / 1024"
