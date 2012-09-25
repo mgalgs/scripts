@@ -1,0 +1,3 @@
+#!/bin/bash
+
+dec2hex $(bin2dec $1)

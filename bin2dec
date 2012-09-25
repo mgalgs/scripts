@@ -1,0 +1,6 @@
+#!/bin/bash
+
+in1=${1^^}
+in1=${in1##0B}
+
+bc <<<"ibase=2;${in1}"
