@@ -1,0 +1,3 @@
+#!/bin/bash
+
+gitk --all --ancestry-path ${1}^..
