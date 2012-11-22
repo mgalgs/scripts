@@ -1,3 +1,3 @@
 #!/bin/bash
 
-gitk --all --ancestry-path ${1:-HEAD}..
+git log --graph --oneline --decorate --all --ancestry-path ${1:-HEAD}..
