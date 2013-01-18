@@ -167,3 +167,21 @@ in_array()
     done
     return 1
 }
+
+# usage: array_join myarray[@] SEP
+array_join()
+{
+    local -a arg_array=("${!1}")
+    shift
+    local bar=$(printf "$1%s" "${arg_array[@]}")
+    bar=${bar:${#1}}
+
+    echo -e $bar
+}
+
+# usage: array_print_one_per_line myarray[@]
+array_print_one_per_line()
+{
+    local -a arg_array=("${!1}")
+    array_join arg_array[@] , | sed 's/,/\n/g'
+}
