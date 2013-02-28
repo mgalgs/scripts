@@ -1,0 +1,48 @@
+#!/bin/bash
+
+################################# INSTRUCTIONS #################################
+# This script makes it possible to enable multiple git hooks for a
+# given hook type. It does this by invoking every script with the
+# target prefix in the hooks directory. This is best accomplished with
+# symlinks.
+#
+# This is best explained with an example. Say you want to have two
+# pre-commit hooks enabled in your repository. First, you would
+# symlink this dispatcher script to pre-commit, like so:
+#
+#     ln -sv /path/to/dispatcher /path/to/repo/.git/hooks/pre-commit
+#
+# Next you would symlink the desired pre-commit scripts to
+# multi-pre-commit-<something>, like so:
+#
+#     ln -sv /patch/to/script1 /path/to/repo/.git/hooks/multi-pre-commit-script1
+#     ln -sv /patch/to/script2 /path/to/repo/.git/hooks/multi-pre-commit-script2
+#
+# And that's it!
+#
+################################################################################
+
+scriptname=$(basename $0)
+hookdir=$(dirname $0)
+
+shopt -s nullglob
+
+C_BLUE='\033[94m'
+C_RED='\033[91m'
+C_END='\033[0m'
+
+case $scriptname in
+    # TODO: handle special folks (like post-receive) that use stdin
+    # instead of command line args
+    *)
+	for f in ${hookdir}/multi-${scriptname}-*; do
+	    # TODO: command line arg to skip hooks
+	    echo -e "    ${C_BLUE}Running multi-hook${C_END}: $(basename $f)"
+	    $f $* || {
+		ret=$?
+		echo -e "    ${C_RED}multi-hook failed${C_END}: $(basename $f)"
+		exit $ret
+	    }
+	done
+	;;
+esac
