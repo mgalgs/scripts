@@ -3,55 +3,75 @@
 declare -A phoneids
 phoneids=(
     [mitchel_N4]=004add3e851192f4
-    [sonnie_N4]=TBD
+    [sonnie_N4]=004b091190078df4
     [mitchel_Nexus_S]=3AEB-1010
     [sonnie_Nexus_S]=BC4C-1008
 )
 
 source ~/scripts/util.sh
 
-if grep -q Ubuntu /etc/lsb-release 2>/dev/null; then
-    mountrootroot=/media
-else
-    mountrootroot=/run/media
-fi
-mountroot=${mountrootroot}/$(whoami)
 syncdest=/media/space
 printtag=' ::=> '
 
-whichphone=none
-
-# TODO: support mtp instead of ptp
-# LD_LIBRARY_PATH=/home/mgalgs/src/libmtp-code/src/.libs/ ~/src/go-mtpfs/go-mtpfs /media/mtpfs/mitchel_N4/
-
 # if this is a PTP phone, get the serial number using gphoto
-gphoto_serial_number=$(gphoto2 --summary | grep '  Serial Number' | cut -d' ' -f5)
+gphoto_serial_number=$(gphoto2 --summary 2>/dev/null | grep '  Serial Number' | cut -d' ' -f5)
+# if this is a Nexus 4, get the serial number using lsusb
+n4_serial_number=$(lsusb -d 18d1:4ee1 -v 2>/dev/null | grep iSerial | awk '{print $3}')
 
-if [[ -n "$gphoto_serial_number" ]]; then
-    # this is a new phone (detected with gphoto)
+if [[ -n "$n4_serial_number" ]]; then
+    serial_number=$n4_serial_number
+    use_mtpfs=yes
+    echo "Found an mtpfs phone (${serial_number})"
+elif [[ -n "$gphoto_serial_number" ]]; then
+    serial_number=$gphoto_serial_number
+    use_gphotofs=yes
+    echo "Found a gphotofs phone (${serial_number})"
+fi
+
+if [[ -n "$serial_number" ]]; then
     for id in ${!phoneids[@]}; do
-	if [[ ${phoneids[$id]} == "$gphoto_serial_number" ]]; then
-	    whichphone=$id
-	    srcdir=/media/gphotofs/$whichphone
-	    gphotofs $srcdir
-	    break
-	fi
+        if [[ ${phoneids[$id]} == "$serial_number" ]]; then
+            whichphone=$id
+            if [[ $use_mtpfs = "yes" ]]; then
+                mountdir=/media/mtpfs/$whichphone
+                srcdir="$mountdir/Internal storage/DCIM"
+                echo "Will mount mtpfs at $mountdir"
+                LD_LIBRARY_PATH=/home/mgalgs/src/libmtp-code/src/.libs/ ~/src/go-mtpfs/go-mtpfs $mountdir &
+                while :; do
+                    echo "waiting for $srcdir to show up..."
+                    sleep 1
+                    [[ -d "$srcdir" ]] && break
+                done
+            elif [[ $use_gphotofs = "yes" ]]; then
+                mountdir=/media/gphotofs/$whichphone
+                srcdir=$mountdir
+                echo "Will mount gphotofs at $srcdir"
+                gphotofs $srcdir || exit 1
+            fi
+            break
+        fi
     done
 else
     # this is an old phone (mounted directly as filesystems)
+    if grep -q Ubuntu /etc/lsb-release 2>/dev/null; then
+        mountrootroot=/media
+    else
+        mountrootroot=/run/media
+    fi
+    mountroot=${mountrootroot}/$(whoami)
     for id in ${!phoneids[@]}; do
-	if [[ -d ${mountroot}/${phoneids[$id]} ]]; then
+        if [[ -d ${mountroot}/${phoneids[$id]} ]]; then
             whichphone=$id
-	    srcdir="${mountroot}/${phoneids[$whichphone]}/DCIM"
+            srcdir="${mountroot}/${phoneids[$whichphone]}/DCIM"
             break
-	fi
+        fi
     done
 fi
 
 
 if [[ $whichphone = none ]]; then
-        bold_print "Failure" 'No phone detected!'
-        exit 1
+    bold_print "Failure" 'No phone detected!'
+    exit 1
 fi
 
 bold_print "Detected phone:" "${whichphone}"
@@ -63,13 +83,17 @@ mkdir -p $dstdir
 bold_print $printtag "Syncing phone to local Phones folder"
 rsync -avuz --exclude '.thumbnails' "$srcdir" "$dstdir"
 
-# sync to sonch if it's up:
-if grep -qs $syncdest /proc/mounts; then
+# sync to sonch if the rsync succeeded and if sonch is up:
+if [[ $? -eq 0 ]]; then
+    if grep -qs $syncdest /proc/mounts; then
         bold_print $printtag "Syncing local Phones folder to sonch"
         rsync -avuz --no-g $HOME/Phones $syncdest
         rsync -avuz --no-g ${syncdest}/Phones $HOME/
-else
+    else
         bold_print $printtag "Couldn't sync to $syncdest (is the freenas server accessible?)"
+    fi
 fi
 
-mount | grep -q fuse.gphotofs && fusermount -u $srcdir
+[[ $use_mtpfs = "yes" ]] && pkill go-mtpfs
+
+mount | grep -q -e fuse.gphotofs -e DeviceFs\(Nexus\ 4\) && fusermount -u "$mountdir"
