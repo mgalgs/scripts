@@ -27,9 +27,15 @@ hookdir=$(dirname $0)
 
 shopt -s nullglob
 
-C_BLUE='\033[94m'
-C_RED='\033[91m'
-C_END='\033[0m'
+if [[ "$TERM" = dumb ]]; then
+    C_BLUE=
+    C_RED=
+    C_END=
+else
+    C_BLUE='\033[94m'
+    C_RED='\033[91m'
+    C_END='\033[0m'
+fi
 
 case $scriptname in
     # TODO: handle special folks (like post-receive) that use stdin
