@@ -1,0 +1,10 @@
+#!/bin/bash
+
+DELAY_MINUTES=5
+LOGFILE=/tmp/offlineimap.log
+
+while :; do
+    echo -e "\n\n========== offlineimap sync $(date) ==========\n" >> $LOGFILE
+    offlineimap -u Noninteractive.Basic 2>&1 >> $LOGFILE
+    sleep $(bc <<<"${DELAY_MINUTES} * 60")
+done
