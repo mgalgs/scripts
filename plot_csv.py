@@ -23,7 +23,7 @@ if __name__ == "__main__":
     ymin -= .1 * yrange
     ymax += .1 * yrange
 
-    p1 = plt.plot(data)
+    p1 = plt.plot(data, '-o')
     plt.legend(p1, titles)
     plt.ylim([ymin, ymax])
     plt.title(sys.argv[1])
