@@ -43,10 +43,10 @@ case $scriptname in
     *)
 	for f in ${hookdir}/multi-${scriptname}-*; do
 	    # TODO: command line arg to skip hooks
-	    echo -e "    ${C_BLUE}Running multi-hook${C_END}: $(basename $f)"
+	    echo -e "\n    ${C_BLUE}***Running multi-hook${C_END}: $(basename $f)***\n"
 	    $f $* || {
 		ret=$?
-		echo -e "    ${C_RED}multi-hook failed${C_END}: $(basename $f)"
+		echo -e "\n    ${C_RED}***multi-hook failed${C_END}: $(basename $f)***\n"
 		exit $ret
 	    }
 	done
