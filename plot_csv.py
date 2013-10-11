@@ -19,9 +19,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description=DESCRIPTION,
         formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument('title')
-    parser.add_argument('ylabel')
-    parser.add_argument('xlabel')
+    parser.add_argument('--title')
+    parser.add_argument('--ylabel')
+    parser.add_argument('--xlabel')
     parser.add_argument('--y-bottom', type=int, metavar='YB',
                         help='Lower limit for y-axis on plot')
     parser.add_argument('--y-top', type=int, metavar='YT',
@@ -41,20 +41,26 @@ if __name__ == "__main__":
 
     ymin = min([min(row) for row in data])
     ymax = max([max(row) for row in data])
-    yrange = ymax - ymin
-    ymin -= .1 * yrange
-    ymax += .1 * yrange
 
     if args.y_bottom is not None:
         ymin = args.y_bottom
     if args.y_top is not None:
         ymax = args.y_top
 
+    yrange = ymax - ymin
+    if args.y_bottom is None:
+        ymin -= .1 * yrange
+    if args.y_top is None:
+        ymax += .1 * yrange
+
     p1 = plt.plot(data, '-o')
-    plt.legend(p1, titles)
+    plt.legend(p1, titles, loc='best')
     plt.ylim([ymin, ymax])
-    plt.title(args.title)
-    plt.ylabel(args.ylabel)
-    plt.xlabel(args.xlabel)
+    if args.title:
+        plt.title(args.title.replace('\\n', '\n'))
+    if args.ylabel:
+        plt.ylabel(args.ylabel)
+    if args.xlabel:
+        plt.xlabel(args.xlabel)
     plt.grid(True)
     plt.show()
