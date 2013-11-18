@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# used to be 18d1:4ee1
+USBDEVICE=18d1:4ee2
+
 declare -A phoneids
 phoneids=(
     [mitchel_N4]=004add3e851192f4
@@ -16,7 +19,7 @@ printtag=' ::=> '
 # if this is a PTP phone, get the serial number using gphoto
 gphoto_serial_number=$(gphoto2 --summary 2>/dev/null | grep '  Serial Number' | cut -d' ' -f5)
 # if this is a Nexus 4, get the serial number using lsusb
-n4_serial_number=$(lsusb -d 18d1:4ee1 -v 2>/dev/null | grep iSerial | awk '{print $3}')
+n4_serial_number=$(lsusb -d $USBDEVICE -v 2>/dev/null | grep iSerial | awk '{print $3}')
 
 if [[ -n "$n4_serial_number" ]]; then
     serial_number=$n4_serial_number
@@ -26,6 +29,9 @@ elif [[ -n "$gphoto_serial_number" ]]; then
     serial_number=$gphoto_serial_number
     use_gphotofs=yes
     echo "Found a gphotofs phone (${serial_number})"
+else
+    echo "No phone detected :("
+    exit 1
 fi
 
 if [[ -n "$serial_number" ]]; then
@@ -75,6 +81,9 @@ if [[ $whichphone = none ]]; then
 fi
 
 bold_print "Detected phone:" "${whichphone}"
+
+echo "Continue? (Ctl-c to quit)"
+read
 
 dstdir="$HOME/Phones/$whichphone"
 mkdir -p $dstdir
