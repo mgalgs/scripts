@@ -2,8 +2,8 @@
 alias mktags='etags `find $CODEDIR -name "*.[h|c]"`'
 alias sstatus='pushd ~/school && svn st && popd'
 alias saddnew='pushd ~/school && addnew && popd'
-alias em="emacs -Q -nw --eval '(ido-mode)'"
-alias emc='emacsclient -n -a emacs'
+alias em="$(which emacs) -Q -nw --eval '(ido-mode)'"
+alias emc="$(which emacsclient) -n -a emacs"
 alias tmail='tail /var/mail/`whoami`'
 alias emacs-clean='find . -name *~ -exec rm {} \; -or -name .*~ -exec rm {} \;'
 alias giporc='git status --porcelain'
