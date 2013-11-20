@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# used to be 18d1:4ee1
-USBDEVICE=18d1:4ee2
+USBDEVICES=(18d1:4ee1 18d1:4ee2)
 
 declare -A phoneids
 phoneids=(
@@ -19,7 +18,10 @@ printtag=' ::=> '
 # if this is a PTP phone, get the serial number using gphoto
 gphoto_serial_number=$(gphoto2 --summary 2>/dev/null | grep '  Serial Number' | cut -d' ' -f5)
 # if this is a Nexus 4, get the serial number using lsusb
-n4_serial_number=$(lsusb -d $USBDEVICE -v 2>/dev/null | grep iSerial | awk '{print $3}')
+for usbdevice in ${USBDEVICES[@]}; do
+    n4_serial_number=$(lsusb -d $usbdevice -v 2>/dev/null | grep iSerial | awk '{print $3}')
+    [[ -n "$n4_serial_number" ]] && break
+done
 
 if [[ -n "$n4_serial_number" ]]; then
     serial_number=$n4_serial_number
