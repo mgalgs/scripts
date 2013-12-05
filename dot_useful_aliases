@@ -15,3 +15,4 @@ alias sprunge="curl -F 'sprunge=<-' http://sprunge.us"
 alias ls='ls --color=auto -B'
 alias grep='grep --color=auto'
 alias gicdtoplevel='cd $(git rev-parse --show-toplevel)'
+alias generate_patch='diff -rupN'
