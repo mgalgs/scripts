@@ -1,0 +1,59 @@
+#!/usr/bin/env python2
+
+import sys
+import commands
+import fileinput
+
+# bubble sort the sha1s on stdin using `git merge-base --is-ancestor'
+
+def git(cmd):
+    return 
+
+def merge_base_cmp(c1, c2):
+    cmd = 'git merge-base --is-ancestor ' + c1 + ' ' + c2
+    status = commands.getstatusoutput(cmd)[0]
+    return status
+
+def bubble(data, compare):
+    did_bubble = True
+    while did_bubble:
+        did_bubble = False
+        for i in range(len(data)):
+            if i == len(data) - 1: break
+            if compare(data[i], data[i + 1]) > 0:
+                tmp = data[i]
+                data[i] = data[i + 1]
+                data[i + 1] = tmp
+                did_bubble = True
+
+def main(args):
+    sha1s = []
+    for line in fileinput.input(args):
+        sha1s.append(line.rstrip('\n'))
+    bubble(sha1s, merge_base_cmp)
+    print '\n'.join(sha1s)
+
+
+# test:
+def test_cmp(c1, c2):
+    return c1 > c2
+
+test_data = (
+    [9, 4, 65],
+    [9, 4, 65, 66],
+    [0],
+    [80, 2, 39, 22, 76, 99, 28, 43, 64, 8, 15, 39, 22, 33, 14, 57, 40, 25, 13, 88, 66, 49, 33, 82, 81, 66, 18, 78, 12, 38, 81, 2, 50, 21],
+)
+
+if __name__ == "__main__":
+    if '--test' in sys.argv:
+        from pprint import pprint
+        for td in test_data:
+            print 'before:'
+            pprint(td, width=1000)
+            bubble(td, test_cmp)
+            print 'after:'
+            pprint(td, width=1000)
+            print
+    else:
+        main(sys.argv[1:])
