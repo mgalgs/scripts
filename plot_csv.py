@@ -36,8 +36,12 @@ if __name__ == "__main__":
 
     titles = lines.pop(0)
     data = []
-    for line in lines:
-        data.append([float(d) for d in line])
+    for cnt,line in enumerate(lines):
+        try:
+            data.append([float(d) for d in line])
+        except:
+            print 'Skipping invalid line (%d):' % cnt, line
+            pass
 
     ymin = min([min(row) for row in data])
     ymax = max([max(row) for row in data])
