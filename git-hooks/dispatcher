@@ -37,6 +37,8 @@ else
     C_END='\033[0m'
 fi
 
+exitval=0
+
 case $scriptname in
     # TODO: handle special folks (like post-receive) that use stdin
     # instead of command line args
@@ -47,8 +49,10 @@ case $scriptname in
 	    $f $* || {
 		ret=$?
 		echo -e "\n    ${C_RED}***multi-hook failed${C_END}: $(basename $f)***\n"
-		exit $ret
+		exitval=$ret
 	    }
 	done
 	;;
 esac
+
+exit $exitval
