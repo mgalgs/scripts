@@ -1,4 +1,5 @@
 # -*- mode: sh -*-
+_my_rdesktop_local_sound="-r disk:tmp=/tmp -r sound:local"
 alias mktags='etags `find $CODEDIR -name "*.[h|c]"`'
 alias sstatus='pushd ~/school && svn st && popd'
 alias saddnew='pushd ~/school && addnew && popd'
@@ -8,7 +9,8 @@ alias tmail='tail /var/mail/`whoami`'
 alias emacs-clean='find . -name *~ -exec rm {} \; -or -name .*~ -exec rm {} \;'
 alias giporc='git status --porcelain'
 alias gistatus='git status'
-alias giull='git pull'
+alias grquickhead="git grquick | head"
+alias grjustmehead="git grjustme | head"
 alias gco='git checkout'
 alias pptview='wine "C:\\program files\microsoft office\office12\pptview.exe"'
 alias sprunge="curl -F 'sprunge=<-' http://sprunge.us"
@@ -17,3 +19,4 @@ alias grep='grep --color=auto'
 alias gicdtoplevel='cd $(git rev-parse --show-toplevel)'
 alias generate_patch='diff -rupN'
 alias vm='emacsclient -nw -a em'
+alias hilite='src-hilite-lesspipe.sh'
