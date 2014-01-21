@@ -12,7 +12,7 @@ phoneids=(
 
 source ~/scripts/util.sh
 
-syncdest=/media/space
+syncdest=/net/freenas/mnt/space
 printtag=' ::=> '
 
 # if this is a PTP phone, get the serial number using gphoto
@@ -42,9 +42,14 @@ if [[ -n "$serial_number" ]]; then
             whichphone=$id
             if [[ $use_mtpfs = "yes" ]]; then
                 mountdir=/media/mtpfs/$whichphone
+                mkdir -pv $mountdir
                 srcdir="$mountdir/Internal storage/DCIM"
                 echo "Will mount mtpfs at $mountdir"
-                LD_LIBRARY_PATH=/home/mgalgs/src/libmtp-code/src/.libs/ ~/src/go-mtpfs/go-mtpfs $mountdir &
+                if [[ $use_go_mtpfs = yes ]]; then
+                    LD_LIBRARY_PATH=/home/mgalgs/src/libmtp-code/src/.libs/ ~/src/go-mtpfs/go-mtpfs $mountdir &
+                else
+                    mtpfs -o allow_other $mountdir
+                fi
                 while :; do
                     echo "waiting for $srcdir to show up..."
                     sleep 1
@@ -105,6 +110,6 @@ if [[ $? -eq 0 ]]; then
     fi
 fi
 
-[[ $use_mtpfs = "yes" ]] && pkill go-mtpfs
+[[ $use_mtpfs = "yes" && $use_go_mtpfs ]] && pkill go-mtpfs
 
 mount | grep -q -e fuse.gphotofs -e DeviceFs\(Nexus\ 4\) && fusermount -u "$mountdir"
