@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# rsync -avu /media/space/Videos /home/mgalgs/
-# rsync -avu /home/mgalgs/Videos /media/space/
+# rsync -avu /net/freenas/mnt/space/Videos /home/mgalgs/
+# rsync -avu /home/mgalgs/Videos /net/freenas/mnt/space/
 
-rsync -rtlvuz /media/space/Pictures /home/mgalgs/
-rsync -rtlvuz /home/mgalgs/Pictures /media/space/
+rsync -rtlvuz /net/freenas/mnt/space/Pictures /home/mgalgs/
+rsync -rtlvuz /home/mgalgs/Pictures /net/freenas/mnt/space/
 
-rsync -rtlvuz /home/mgalgs/Music /media/space/
-rsync -rtlvuz /media/space/Music /home/mgalgs/
+rsync -rtlvuz /home/mgalgs/Music /net/freenas/mnt/space/
+rsync -rtlvuz /net/freenas/mnt/space/Music /home/mgalgs/
