@@ -22,9 +22,9 @@ if __name__ == "__main__":
     parser.add_argument('--title')
     parser.add_argument('--ylabel')
     parser.add_argument('--xlabel')
-    parser.add_argument('--y-bottom', type=int, metavar='YB',
+    parser.add_argument('--y-bottom', type=float, metavar='YB',
                         help='Lower limit for y-axis on plot')
-    parser.add_argument('--y-top', type=int, metavar='YT',
+    parser.add_argument('--y-top', type=float, metavar='YT',
                         help='Upper limit for y-axis on plot')
 
     args = parser.parse_args()
