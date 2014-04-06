@@ -21,7 +21,7 @@ alias generate_patch='diff -rupN'
 alias vm='emacsclient -nw -a em'
 alias hilite='src-hilite-lesspipe.sh'
 alias pidgin_fixed="NSS_SSL_CBC_RANDOM_IV=0 pidgin"
-alias jsonprettydump="python -c 'import json,sys; print json.dumps(json.load(sys.stdin), indent=4)'"
+alias jsonprettydump="python2 -c 'import json,sys; print json.dumps(json.load(sys.stdin), indent=4)'"
 alias cp='cp --reflink=auto'
 
 alias akmsg="adb wait-for-device; adb root; sleep 1; adb wait-for-device; adb shell cat /proc/kmsg"
