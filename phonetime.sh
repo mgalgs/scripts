@@ -46,7 +46,7 @@ if [[ -n "$serial_number" ]]; then
                 srcdir="$mountdir/Internal storage/DCIM"
                 echo "Will mount mtpfs at $mountdir"
                 if [[ $use_go_mtpfs = yes ]]; then
-                    LD_LIBRARY_PATH=/home/mgalgs/src/libmtp-code/src/.libs/ ~/src/go-mtpfs/go-mtpfs $mountdir &
+                    go-mtpfs $mountdir &
                 else
                     mtpfs -o allow_other $mountdir
                 fi
