@@ -12,7 +12,7 @@ phoneids=(
 
 source ~/scripts/util.sh
 
-syncdest=/net/freenas/mnt/space
+syncdest=/net/space/media/space
 printtag=' ::=> '
 
 # if this is a PTP phone, get the serial number using gphoto
