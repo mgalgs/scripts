@@ -1,0 +1,38 @@
+#!/bin/bash
+
+[[ "$1" = "-h" || "$1" == "--help" ]] && {
+    cat <<EOF
+Usage: csvcut <delimiter> <field> <files...>
+
+Cut a field from files and output as csv. Each line contains the
+specified field from each file.
+
+Example:
+
+    $ csvcut , 2 <(echo -e "1,2,3\n3,4,5") <(echo -e "6,7,8\n9,10,11")
+    2,7
+    4,10
+EOF
+    exit 1
+}
+
+
+
+delimiter="$1"
+shift
+field="$1"
+shift
+
+files=()
+while (( "$#" )); do
+    files+=("$1")
+    shift
+done
+
+args=()
+
+for f in ${files[@]}; do
+    args+=("<(cut -d\"${delimiter}\" -f${field} $f )")
+done
+
+eval "paste -d, ${args[@]}"
