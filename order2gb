@@ -1,0 +1,3 @@
+#!/bin/bash
+
+hex2gb $(kb2hex $(order2kb $1))
