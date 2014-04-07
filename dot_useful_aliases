@@ -24,7 +24,9 @@ alias pidgin_fixed="NSS_SSL_CBC_RANDOM_IV=0 pidgin"
 alias jsonprettydump="python2 -c 'import json,sys; print json.dumps(json.load(sys.stdin), indent=4)'"
 alias cp='cp --reflink=auto'
 
+alias awaitfordevice="adb wait-for-device"
 alias akmsg="adb wait-for-device; adb root; sleep 1; adb wait-for-device; adb shell cat /proc/kmsg"
 alias alogcat="adb wait-for-device; sleep 5; adb wait-for-device; adb logcat"
 alias aroot="adb wait-for-device; adb root; sleep 1; adb wait-for-device"
 alias areboot="adb wait-for-device; adb reboot"
+alias arebootbootloader="adb wait-for-device; adb reboot-bootloader"
