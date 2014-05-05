@@ -89,9 +89,6 @@ fi
 
 bold_print "Detected phone:" "${whichphone}"
 
-echo "Continue? (Ctl-c to quit)"
-read
-
 dstdir="$HOME/Phones/$whichphone"
 mkdir -p $dstdir
 
