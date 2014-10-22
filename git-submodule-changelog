@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# This should be run *directly after* a
+# `git submodule update --remote'
+
+# TODO: verify that we only have submodule changes
+for d in $(git status --porcelain | awk '{print $2}'); do 
+    [[ -d $d ]] || continue
+    (
+	cd $d
+	echo -e "\n${PWD##*/}"
+        git log --no-merges --oneline HEAD@{1}..
+    )
+done
