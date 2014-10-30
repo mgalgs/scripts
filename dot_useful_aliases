@@ -9,6 +9,7 @@ alias tmail='tail /var/mail/`whoami`'
 alias emacs-clean='find . -name *~ -exec rm {} \; -or -name .*~ -exec rm {} \;'
 alias giporc='git status --porcelain'
 alias gistatus='git status'
+alias gsus='git status'
 alias gatus='git status'
 alias grquickhead="git grquick | head"
 alias grjustmehead="git grjustme | head"
