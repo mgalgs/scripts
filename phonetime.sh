@@ -26,6 +26,7 @@ done
 if [[ -n "$n4_serial_number" ]]; then
     serial_number=$n4_serial_number
     use_mtpfs=yes
+    use_go_mtpfs=yes
     echo "Found an mtpfs phone (${serial_number})"
 elif [[ -n "$gphoto_serial_number" ]]; then
     serial_number=$gphoto_serial_number
