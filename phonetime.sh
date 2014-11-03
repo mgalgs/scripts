@@ -99,13 +99,9 @@ rsync -avuz --exclude '.thumbnails' "$srcdir" "$dstdir"
 
 # sync to sonch if the rsync succeeded and if sonch is up:
 if [[ $? -eq 0 ]]; then
-    if grep -qs $syncdest /proc/mounts; then
-        bold_print $printtag "Syncing local Phones folder to sonch"
-        rsync -avuz --no-g $HOME/Phones $syncdest
-        rsync -avuz --no-g ${syncdest}/Phones $HOME/
-    else
-        bold_print $printtag "Couldn't sync to $syncdest (is the freenas server accessible?)"
-    fi
+    bold_print $printtag "Syncing local Phones folder to sonch"
+    rsync -avuz --no-g $HOME/Phones $syncdest
+    rsync -avuz --no-g ${syncdest}/Phones $HOME/
 fi
 
 [[ $use_mtpfs = "yes" && $use_go_mtpfs ]] && pkill go-mtpfs
