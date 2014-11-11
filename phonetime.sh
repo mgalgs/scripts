@@ -15,6 +15,24 @@ source ~/scripts/util.sh
 syncdest=/net/space/media/space
 printtag=' ::=> '
 
+usage()
+{
+    echo "Usage: $(basename $0) [options]"
+    echo
+    echo "Options:"
+    echo " --local    Local sync only. Don't look for a phone."
+}
+
+local_sync()
+{
+    bold_print $printtag "Syncing local Phones folder to sonch"
+    rsync -avuz --no-g $HOME/Phones $syncdest
+    rsync -avuz --no-g ${syncdest}/Phones $HOME/
+}
+
+[[ "$1" = "-h" || "$1" = "--help" ]] && { usage; exit 1; }
+[[ "$1" = "--local" ]] && { local_sync; exit $?; }
+
 # if this is a PTP phone, get the serial number using gphoto
 gphoto_serial_number=$(gphoto2 --summary 2>/dev/null | grep '  Serial Number' | cut -d' ' -f5)
 # if this is a Nexus 4, get the serial number using lsusb
@@ -99,9 +117,7 @@ rsync -avuz --exclude '.thumbnails' "$srcdir" "$dstdir"
 
 # sync to sonch if the rsync succeeded and if sonch is up:
 if [[ $? -eq 0 ]]; then
-    bold_print $printtag "Syncing local Phones folder to sonch"
-    rsync -avuz --no-g $HOME/Phones $syncdest
-    rsync -avuz --no-g ${syncdest}/Phones $HOME/
+    local_sync
 fi
 
 [[ $use_mtpfs = "yes" && $use_go_mtpfs ]] && pkill go-mtpfs
