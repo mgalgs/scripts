@@ -38,7 +38,7 @@ while :; do
     fi
     [[ -z "$isobase" ]] && { echo "Couldn't get disc title. bailing."; errorout; }
     isoname="${isobase}.iso"
-    echo "ripping $isoname"
+    echo "ripping $isoname to $OUTDIR/$isoname"
     dd if=$DVDDEVICE of=$OUTDIR/$isoname bs=8k || { echo "dd failed. bailing."; errorout; }
     chown $ISOOWNER:$ISOGROUP $OUTDIR/$isoname
     echo 'done!'
