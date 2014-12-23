@@ -9,7 +9,6 @@ ISOGROUP=${ISOGROUP:users}
 
 waitfordisc()
 {
-    echo -n "waiting for disc..."
     while :; do
         [[ -e $DVDDEVICE ]] && { echo; break; }
         echo -n .
@@ -32,9 +31,9 @@ while :; do
     waitfordisc
     isobase=$(blkid $DVDDEVICE -o value -s LABEL)
     if [[ -z "$isobase" ]]; then
-	# couldn't get disc title with blkid :( let's try lsdvd.
-	echo "Couldn't get disc title with blkid... Trying lsdvd..."
-	isobase=$(lsdvd $DVDDEVICE | grep "Disc Title:" | cut -d: -f2 | cut -c2-)
+        # couldn't get disc title with blkid :( let's try lsdvd.
+        echo "Couldn't get disc title with blkid... Trying lsdvd..."
+        isobase=$(lsdvd $DVDDEVICE | grep "Disc Title:" | cut -d: -f2 | cut -c2-)
     fi
     [[ -z "$isobase" ]] && { echo "Couldn't get disc title. bailing."; errorout; }
     isoname="${isobase}.iso"
