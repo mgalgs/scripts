@@ -5,10 +5,13 @@ PROGGIE=$(basename $0)
 
 log()
 {
+    echo "$*"
     date +"%F %T $PROGGIE $*" >> $LOGFILE
 }
 
-# $DEVNAME should come from udev
+log "hello from $PROGGIE"
+
+# $DEVNAME should come from udev or systemd
 log "hello from $0"
 [[ -z "$DEVNAME" ]] && { log "DEVNAME env var not set\! bailing..."; exit 1; }
 OUTDIR=${OUTDIR:-/media/space/Movies/isos}
@@ -20,8 +23,7 @@ ISOGROUP=${ISOGROUP:users}
 waitfordisc()
 {
     # bonus mount seems to help get things going... don't ask me...
-    tmpmount=$(mktemp)
-    mkdir -p $tmpmount
+    tmpmount=$(mktemp -d)
     mount $DEVNAME $tmpmount
     umount $tmpmount
     rm -r $tmpmount
@@ -33,6 +35,7 @@ errorout()
     exit 1
 }
 
+[[ -e "$DEVNAME" ]] || { log "Can't find $DEVNAME"; exit 1; }
 waitfordisc
 isobase=$(blkid $DEVNAME -o value -s LABEL)
 if [[ -z "$isobase" ]]; then
