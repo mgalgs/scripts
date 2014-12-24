@@ -27,7 +27,6 @@ local_sync()
 {
     bold_print $printtag "Syncing local Phones folder to sonch"
     rsync -avuz --no-g $HOME/Phones $syncdest
-    rsync -avuz --no-g ${syncdest}/Phones $HOME/
 }
 
 [[ "$1" = "-h" || "$1" = "--help" ]] && { usage; exit 1; }
