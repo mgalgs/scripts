@@ -1,6 +1,7 @@
 #!/bin/bash
 
 LOGFILE=/var/log/dd-one-from-udev
+CONFFILE=/etc/conf.d/dd-one.conf
 PROGGIE=$(basename $0)
 
 log()
@@ -14,9 +15,11 @@ log "hello from $PROGGIE"
 # $DEVNAME should come from udev or systemd
 log "hello from $0"
 [[ -z "$DEVNAME" ]] && { log "DEVNAME env var not set\! bailing..."; exit 1; }
-OUTDIR=${OUTDIR:-/media/space/Movies/isos}
-ISOOWNER=${ISOOWNER:mgalgs}
-ISOGROUP=${ISOGROUP:users}
+[[ -r $CONFFILE ]] || { log "Couldn't read $CONFFILE"; exit 1; }
+source $CONFFILE
+[[ -z "$OUTDIR" ]] && { log "Bogus config. Missing OUTDIR."; exit 1; }
+[[ -z "$ISOOWNER" ]] && { log "Bogus config. Missing ISOOWNER."; exit 1; }
+[[ -z "$ISOGROUP" ]] && { log "Bogus config. Missing ISOGROUP."; exit 1; }
 
 [[ $EUID -eq 0 ]] || { log "please run as root"; exit 1; }
 
