@@ -2,6 +2,7 @@
 
 LOGFILE=/var/log/dd-one-from-udev
 DDRESCUE_LOGFILE=/var/log/dd-one-from-udev-ddrescue
+DDRESCUE_OUTPUT_LOGFILE=/var/log/dd-one-from-udev-ddrescue-output
 CONFFILE=/etc/conf.d/dd-one.conf
 PROGGIE=$(basename $0)
 
@@ -26,20 +27,23 @@ source $CONFFILE
 
 waitfordisc()
 {
+    log "waiting for disc and dancing around..."
     # make sure the disc is unmounted first:
     while read line; do
+	sleep 3
         umount $(awk '{print $1}' <<<$line)
     done < <(mount | grep $DEVNAME)
 
     # bonus mount seems to help get things going... don't ask me...
     tmpmount=$(mktemp -d)
-    mount $DEVNAME $tmpmount
+    sleep 3
+    mount -t iso9660 -o ro $DEVNAME $tmpmount || { log "Couldn't mount $DEVNAME to $tmpmount... bailling"; errorout; }
     # sometimes umount takes some convincing... I don't know...
     success=no
     for i in $(seq 5); do
         umount $tmpmount && { success=yes; break; }
-        log "Couldn't unmount... Sleeping for 2 then trying again..."
-        sleep 2
+        log "Couldn't unmount... Sleeping for 3 then trying again..."
+        sleep 3
     done
     [[ $success = no ]] && { log "Couldn't umount $DEVNAME"; errorout; }
     rm -r $tmpmount
@@ -63,6 +67,7 @@ fi
 isoname="${isobase}.iso"
 IMGNAME=$OUTDIR/$isoname
 log "ripping $isoname to $IMGNAME"
+mkdir -pv $OUTDIR
 success=no
 for blocksize in 64k 8k 4k; do
     echo "trying dd with blocksize=$blocksize"
@@ -80,13 +85,13 @@ done
     # suggests for cdroms)
 
     log "first trying with no scraping."
-    ddrescue -n -r 3 -b2048 $DEVNAME $IMGNAME $DDRESCUE_LOGFILE && break
+    ddrescue -n -r 3 -b2048 $DEVNAME $IMGNAME $DDRESCUE_LOGFILE &>$DDRESCUE_OUTPUT_LOGFILE && break
     log "no dice.  Now trying direct access."
-    ddrescue -d -r 3 -b2048 $DEVNAME $IMGNAME $DDRESCUE_LOGFILE && break
+    ddrescue -d -r 3 -b2048 $DEVNAME $IMGNAME $DDRESCUE_LOGFILE &>$DDRESCUE_OUTPUT_LOGFILE && break
     log "still no dice. Trying with retrim."
-    ddrescue -d -R -r 3 -b2048 $DEVNAME $IMGNAME $DDRESCUE_LOGFILE && break
+    ddrescue -d -R -r 3 -b2048 $DEVNAME $IMGNAME $DDRESCUE_LOGFILE &>$DDRESCUE_OUTPUT_LOGFILE && break
     log "still no... Just try one more time..."
-    ddrescue    -r 3 -b2048 $DEVNAME $IMGNAME $DDRESCUE_LOGFILE && break
+    ddrescue    -r 3 -b2048 $DEVNAME $IMGNAME $DDRESCUE_LOGFILE &>$DDRESCUE_OUTPUT_LOGFILE && break
 
     errorout
 }
