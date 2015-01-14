@@ -1,6 +1,7 @@
 #!/bin/bash
 
 LOGFILE=/var/log/dd-one-from-udev
+DDRESCUE_LOGFILE=/var/log/dd-one-from-udev-ddrescue
 CONFFILE=/etc/conf.d/dd-one.conf
 PROGGIE=$(basename $0)
 
@@ -25,10 +26,22 @@ source $CONFFILE
 
 waitfordisc()
 {
+    # make sure the disc is unmounted first:
+    while read line; do
+        umount $(awk '{print $1}' <<<$line)
+    done < <(mount | grep $DEVNAME)
+
     # bonus mount seems to help get things going... don't ask me...
     tmpmount=$(mktemp -d)
     mount $DEVNAME $tmpmount
-    umount $tmpmount
+    # sometimes umount takes some convincing... I don't know...
+    success=no
+    for i in $(seq 5); do
+        umount $tmpmount && { success=yes; break; }
+        log "Couldn't unmount... Sleeping for 2 then trying again..."
+        sleep 2
+    done
+    [[ $success = no ]] && { log "Couldn't umount $DEVNAME"; errorout; }
     rm -r $tmpmount
 }
 
@@ -48,8 +61,35 @@ if [[ -z "$isobase" ]]; then
 fi
 [[ -z "$isobase" ]] && { log "Couldn't get disc title. bailing."; errorout; }
 isoname="${isobase}.iso"
-log "ripping $isoname to $OUTDIR/$isoname"
-dd if=$DEVNAME of=$OUTDIR/$isoname bs=8k || { log "dd failed. bailing."; errorout; }
+IMGNAME=$OUTDIR/$isoname
+log "ripping $isoname to $IMGNAME"
+success=no
+for blocksize in 64k 8k 4k; do
+    echo "trying dd with blocksize=$blocksize"
+    dd if=$DEVNAME of=$IMGNAME bs=$blocksize || {
+        echo "blocksize=$blocksize failed..."
+        sleep 2
+        continue
+    }
+    success=yes
+done
+[[ $success = yes ]] || {
+    log "dd failed. making one last attempt with ddrescue..."
+
+    # for all: 3 retries, block size=2048 (which is what the manual
+    # suggests for cdroms)
+
+    log "first trying with no scraping."
+    ddrescue -n -r 3 -b2048 $DEVNAME $IMGNAME $DDRESCUE_LOGFILE && break
+    log "no dice.  Now trying direct access."
+    ddrescue -d -r 3 -b2048 $DEVNAME $IMGNAME $DDRESCUE_LOGFILE && break
+    log "still no dice. Trying with retrim."
+    ddrescue -d -R -r 3 -b2048 $DEVNAME $IMGNAME $DDRESCUE_LOGFILE && break
+    log "still no... Just try one more time..."
+    ddrescue    -r 3 -b2048 $DEVNAME $IMGNAME $DDRESCUE_LOGFILE && break
+
+    errorout
+}
 chown $ISOOWNER:$ISOGROUP $OUTDIR/$isoname
 log 'done!'
 eject $DEVNAME
