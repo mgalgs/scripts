@@ -84,17 +84,21 @@ done
     # for all: 3 retries, block size=2048 (which is what the manual
     # suggests for cdroms)
 
-    log "first trying with no scraping."
-    ddrescue -n -r 3 -b2048 $DEVNAME $IMGNAME $DDRESCUE_LOGFILE &>$DDRESCUE_OUTPUT_LOGFILE && break
-    log "no dice.  Now trying direct access."
-    ddrescue -d -r 3 -b2048 $DEVNAME $IMGNAME $DDRESCUE_LOGFILE &>$DDRESCUE_OUTPUT_LOGFILE && break
-    log "still no dice. Trying with retrim."
-    ddrescue -d -R -r 3 -b2048 $DEVNAME $IMGNAME $DDRESCUE_LOGFILE &>$DDRESCUE_OUTPUT_LOGFILE && break
-    log "still no... Just try one more time..."
-    ddrescue    -r 3 -b2048 $DEVNAME $IMGNAME $DDRESCUE_LOGFILE &>$DDRESCUE_OUTPUT_LOGFILE && break
-
-    errorout
+    # need a loop for the `break'...
+    while :; do
+        log "first trying with no scraping."
+        ddrescue -n -r 3 -b2048 $DEVNAME $IMGNAME $DDRESCUE_LOGFILE &>$DDRESCUE_OUTPUT_LOGFILE && break
+        log "no dice.  Now trying direct access."
+        ddrescue -d -r 3 -b2048 $DEVNAME $IMGNAME $DDRESCUE_LOGFILE &>$DDRESCUE_OUTPUT_LOGFILE && break
+        log "still no dice. Trying with retrim."
+        ddrescue -d -R -r 3 -b2048 $DEVNAME $IMGNAME $DDRESCUE_LOGFILE &>$DDRESCUE_OUTPUT_LOGFILE && break
+        log "still no... Just try one more time..."
+        ddrescue    -r 3 -b2048 $DEVNAME $IMGNAME $DDRESCUE_LOGFILE &>$DDRESCUE_OUTPUT_LOGFILE && break
+        log "Nothing worked. Relenting..."
+        errorout
+    done
 }
+
 chown $ISOOWNER:$ISOGROUP $OUTDIR/$isoname
 log 'done!'
 eject $DEVNAME
