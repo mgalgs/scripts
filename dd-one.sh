@@ -100,3 +100,5 @@ done
 chown $ISOOWNER:$ISOGROUP $OUTDIR/$isoname
 log 'done!'
 eject $DEVNAME
+cd $(dirname $0)
+./handbrakectl newiso $OUTDIR/$isoname
