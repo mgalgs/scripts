@@ -78,7 +78,7 @@ if __name__ == "__main__":
             xmax = xmax or max(data[:, 0]) + 1
         xlabel, ylabel = titles
     else:
-        p1 = plt.plot(data, '-o')
+        p1 = plt.plot(data, os.getenv('LINESTYLE', '-o'))
         plt.legend(p1, titles, loc='best')
 
     if xmin is not None and xmax is not None:
