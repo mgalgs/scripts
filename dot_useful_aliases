@@ -10,11 +10,9 @@ alias emacs-clean='find . -name *~ -exec rm {} \; -or -name .*~ -exec rm {} \;'
 alias giporc='git status --porcelain'
 alias gistatus='git status'
 alias gsus='git status'
-alias gatus='git status'
 alias grquickhead="git grquick | head"
 alias grjustmehead="git grjustme | head"
-alias gco='git checkout'
-alias pptview='wine "C:\\program files\microsoft office\office12\pptview.exe"'
+alias gps='git pull --stat'
 alias sprunge="curl -F 'sprunge=<-' http://sprunge.us"
 alias ls='ls --color=auto -B'
 alias grep='grep --color=auto'
