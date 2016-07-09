@@ -33,6 +33,8 @@ if __name__ == "__main__":
                         help='Upper limit for x-axis on plot')
     parser.add_argument('--scatter', action='store_true',
                         help='Generate a scatter plot. When given, there should only be two columns of data.')
+    parser.add_argument('--histogram', action='store_true',
+                        help='Generate a histogram. When given, there should only be one column of data.')
     parser.add_argument('--smooth', type=int,
                         nargs='?', const=11, metavar='window_len',
                         help='Smooth the data by convolving it with a Hanning window of the given length. window_len defaults to 11.')
@@ -69,6 +71,8 @@ if __name__ == "__main__":
         if xmax is None:
             xmax = xmax or max(data[:, 0]) + 1
         xlabel, ylabel = titles
+    elif args.histogram:
+        n, bins, patches = plt.hist(data, 5)
     else:
         smoothed = []
         linestyle = os.getenv('LINESTYLE', '-o')
