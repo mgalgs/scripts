@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 import sys
 import os
@@ -56,7 +56,7 @@ if __name__ == "__main__":
         try:
             data.append([float(d) for d in line])
         except:
-            print 'Skipping invalid line (%d):' % cnt, line
+            print('Skipping invalid line (%d):' % cnt, line)
             pass
 
     data = np.array(data)
