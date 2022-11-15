@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Just a crap wrapper for cask so that I don't have to edit Makefiles just
+# to `cask exec' something.
+
+
+# BEWARE: `package-directory' and `files' are both crap. `exec' should work
+# just fine.
+case $1 in
+    package-directory)
+        echo "/tmp"
+        ;;
+    files)
+        echo *.el
+        ;;
+    exec)
+        shift
+        echo "Running $*" >&2
+        exec $*
+        ;;
+esac
