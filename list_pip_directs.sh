@@ -1,5 +1,9 @@
 #!/bin/bash
 
+## Prints out all Python packages in the current pip environment that were
+## explicitly installed (i.e. not installed as a dependency of another
+## package).
+
 # List all installed packages
 installed_packages=$(pip list --format=freeze | cut -d'=' -f1)
 
