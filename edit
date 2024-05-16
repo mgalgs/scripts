@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Create a temporary file to store the stdin content
+temp_file=$(mktemp /tmp/edit.XXXXXX)
+
+# Save stdin to the temporary file
+cat - > "$temp_file"
+
+# Generate a unique buffer name based on current timestamp
+buffer_name="*edit-$(date +%s)*"
+
+# Open Emacs with a new buffer, insert file contents, and delete the temp file
+emacsclient -n --suppress-output -e "(progn
+  (set-buffer (get-buffer-create \"$buffer_name\"))
+  (switch-to-buffer \"$buffer_name\")
+  (insert-file-contents \"$temp_file\")
+  (delete-file \"$temp_file\"))"
+
+# Note: No need to delete the temp file in the script, Emacs handles it.
